@@ -1,0 +1,65 @@
+/* src/app.css */
+
+:root {
+  --primary-color: #007bff; /* Blue */
+  --secondary-color: #0056b3; /* Darker Blue */
+  --background-color: #000000; /* Black */
+  --text-color: #ffffff; /* White */
+  --button-hover-color: #0056b3; /* Button Hover Blue */
+  --logo-size: 120px;
+}
+
+/* Use the defined color variables */
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+}
+
+/* Navigation Bar */
+.nav-button {
+  background-color: transparent;
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nav-button:hover {
+  background-color: var(--primary-color);
+  color: var(--background-color);
+}
+
+/* Main Content */
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.description {
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.start-button {
+  padding: 12px 24px;
+  font-size: 1rem;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.start-button:hover {
+  background-color: var(--button-hover-color);
+}
+
+.logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: var(--logo-size);
+}
