@@ -10,7 +10,7 @@
   
     <!-- Navigation Bar (Top Right) -->
     <nav class="nav">
-      <button class="nav-button" on:click={() => navigateTo('/dashboard')}>Dashboard</button>
+      <button class="nav-button" on:click={() => navigateTo('/projects/myProjects')}>Dashboard</button>
       <button class="nav-button" on:click={() => navigateTo('/settings')}>Settings</button>
     </nav>
   
