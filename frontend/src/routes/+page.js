@@ -1,3 +1,4 @@
+//Template for how to communicate with backend
 export async function load({ fetch }) {
     const res = await fetch('/api/projects/getFromAnalyst?initials=EF', {
       method: 'POST'
