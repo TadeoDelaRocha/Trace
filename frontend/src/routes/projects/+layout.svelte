@@ -5,7 +5,6 @@
 
     const currentPath = derived(page, ($page) => $page.url.pathname);
 
-
     function navigateTo(route) {
       window.location.href = route;
     }
