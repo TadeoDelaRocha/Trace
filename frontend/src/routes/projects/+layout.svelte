@@ -5,7 +5,7 @@
 
     const currentPath = derived(page, ($page) => $page.url.pathname);
 
-    function navigateTo(route) {
+    function navigate(route) {
       window.location.href = route;
     }
 </script>
@@ -23,8 +23,8 @@
       <div class="middle">
         <button
           class="icon-button"
-          class:active={$currentPath === '/projects/myprojects'}
-          on:click={() => navigate('/projects/myprojects')}
+          class:active={$currentPath === '/projects/myProjects'}
+          on:click={() => navigate('/projects/myProjects')}
         >
           📁
         </button>
