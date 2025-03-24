@@ -19,7 +19,38 @@ export function closeCreateModal() {
 	showCreateModal.set(false);
 }
 
-export async function submitForm(event: Event) {
+export async function submitDeleteForm(toDelete: string) {
+    const payload = {
+        toDelete: toDelete
+    };
+
+    try {
+        const res = await fetch('/api/projects/delete', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+
+        if (!res.ok) {
+            const error = await res.text();
+			console.error('Failed to delete project:', error);
+			alert('Error deleting project');
+			return;
+        }
+
+        const data = await res.json();
+		console.log('Project deleted:', data);
+		alert('Project deleted successfully!');
+		showCreateModal.set(false);
+    } catch (err) {
+		console.error('Error:', err);
+		alert('Something went wrong.');
+	}
+}
+
+export async function submitCreateForm(event: Event) {
 	event.preventDefault();
 
 	let $name = '', $date = '', $time = '', $owner = '', $description = '';
@@ -38,7 +69,7 @@ export async function submitForm(event: Event) {
 	};
 
 	try {
-		const res = await fetch('http://localhost:8000/projects/create', {
+		const res = await fetch('/api/projects/create', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

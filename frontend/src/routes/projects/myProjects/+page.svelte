@@ -11,7 +11,8 @@
 		showCreateModal,
 		openCreateModal,
 		closeCreateModal,
-		submitForm,
+		submitCreateForm,
+        submitDeleteForm,
 		openMenuFor,
 		menuPosition,
 		toggleMenu,
@@ -73,7 +74,10 @@
 										<!-- svelte-ignore a11y_no_static_element_interactions -->
 										<div class="dropdown-menu" on:click|stopPropagation>
 											<button on:click={() => console.log('Lock', project.name)}>Lock</button>
-											<button on:click={() => console.log('Delete', project.name)}>Delete</button>
+											<button on:click={() => {submitDeleteForm(project.name);}}
+                                        >
+                                            Delete
+                                        </button>
 										</div>
 									{/if}
 								</div>
@@ -103,7 +107,7 @@
 				<button class="close-btn" on:click={closeCreateModal}>×</button>
 			</div>
 
-			<form on:submit={submitForm}>
+			<form on:submit={submitCreateForm}>
 				<div class="form-grid">
 					<label>
 						Project Name *
