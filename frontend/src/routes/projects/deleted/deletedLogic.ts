@@ -5,7 +5,7 @@ export const menuPosition = writable({ top: 0, left: 0 });
 
 export async function submitRestoreForm(toRestore: string) {
     const payload = {
-        toRestore: toRestore
+        toEdit: toRestore
     };
 
     console.log("Submitting banish request:", payload);
