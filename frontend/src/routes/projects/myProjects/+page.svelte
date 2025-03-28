@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import './myProjects.css';
 	import {
 		activeTab,
 		name,
@@ -14,9 +12,7 @@
 		submitCreateForm,
         submitDeleteForm,
 		openMenuFor,
-		menuPosition,
 		toggleMenu,
-		closeMenu
 	} from './myProjectsLogic';
 
 	export let data;
