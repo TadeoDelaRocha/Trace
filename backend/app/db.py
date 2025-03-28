@@ -2,6 +2,9 @@
 import os
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
+from neo4j.time import DateTime as Neo4jDateTime
+from datetime import datetime
+
 
 # Load environment variables from .env
 load_dotenv()
@@ -11,6 +14,16 @@ NEO4J_USER = os.getenv("NEO4J_USER")
 NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD")
 
 driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+
+def to_iso(dt):
+    if isinstance(dt, datetime):
+        return dt.isoformat()
+    elif isinstance(dt, Neo4jDateTime):
+        return dt.to_native().isoformat()
+    elif isinstance(dt, str):
+        return dt  # assume already ISO
+    else:
+        return None
 
 def close_driver():
     driver.close()
@@ -24,7 +37,9 @@ def create_project(name: str, owner_initials: str, date: str, time: str, descrip
             startTime: $time,
             description: $description,
             deleted: false,
-            lastEdit: datetime()
+            owner: $owner_initials,
+            lastEdit: datetime(), 
+            locked: false
         })
         CREATE (a)-[:LEADS]->(p)
         RETURN p, a.initials AS owner
@@ -55,11 +70,16 @@ def get_from_analyst(initials: str):
     query = """
         MATCH (a:Analyst {initials: $initials})-[:ANALYST_ON|LEADS]->(p:Project)
         WHERE p.deleted = false
-        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit
+        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit, p.locked AS locked
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
-        return [record.data() for record in result]
+        return [{
+            "name": record["name"],
+            "owner": record["owner"],
+            "editTime": to_iso(record["lastEdit"]),
+            "locked": record["locked"]
+        } for record in result]
 
 def get_from_analyst_deleted(initials: str):
     query = """
@@ -69,7 +89,12 @@ def get_from_analyst_deleted(initials: str):
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
-        return [record.data() for record in result]
+        return [{
+            "name": record["name"],
+            "owner": record["owner"],
+            "editTime": to_iso(record["lastEdit"])
+        } for record in result]
+
 
 def lock_project(name: str):
     query = """

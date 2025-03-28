@@ -6,14 +6,8 @@ from app.db import create_project, delete_project, get_from_analyst, lock_projec
 
 app = FastAPI()
 
-class RestorePayload(BaseModel):
-    toRestore: str
-
-class BanishPayload(BaseModel):
-    toBanish: str
-
-class DeletePayload(BaseModel):
-    toDelete: str
+class ProjectNamePayload(BaseModel):
+    toEdit: str
 
 class CreateProjectPayload(BaseModel):
     name: str
@@ -47,8 +41,8 @@ def createProject(project: CreateProjectPayload):
         raise HTTPException(status_code=500, detail="Failed to create project")
 
 @app.post("/api/projects/delete")
-def deleteProject(payload: DeletePayload):
-    name = payload.toDelete
+def deleteProject(payload: ProjectNamePayload):
+    name = payload.toEdit
     project = delete_project(name)
     if project:
         return {"message": "Project marked as deleted", "project": project}
@@ -65,16 +59,18 @@ def getAnalystProjects(initials: str):
     projects = get_from_analyst_deleted(initials)
     return {"projects": projects}
 
-@app.get("/api/projects/lock")
-def lockProject(name: str):
+@app.post("/api/projects/lock")
+def lockProject(payload: ProjectNamePayload):
+    name = payload.toEdit
     project = lock_project(name)
     if project:
         return {"message": "Project locked", "project": project}
     else:
         raise HTTPException(status_code=404, detail="Project not found")
 
-@app.get("/api/projects/unlock")
-def unlockProject(name: str):
+@app.post("/api/projects/unlock")
+def unlockProject(payload: ProjectNamePayload):
+    name = payload.toEdit
     project = unlock_project(name)
     if project:
         return {"message": "Project unlocked", "project": project}
@@ -82,17 +78,17 @@ def unlockProject(name: str):
         raise HTTPException(status_code=404, detail="Project not found")
 
 @app.post("/api/projects/banish")
-def banishProject(payload: BanishPayload):
-    name = payload.toBanish
+def banishProject(payload: ProjectNamePayload):
+    name = payload.toEdit
     result = banish_project(name)
     if result == 1:
-        return {"message": "Project banished forever", "project": project}
+        return {"message": "Project banished forever"}
     else:
         raise HTTPException(status_code=404, detail="Project not found")
 
 @app.post("/api/projects/restore")
-def restoreProject(payload: RestorePayload):
-    name = payload.toRestore
+def restoreProject(payload: ProjectNamePayload):
+    name = payload.toEdit
     project = restore_project(name)
     if project:
         return {"message": "Project marked as deleted", "project": project}

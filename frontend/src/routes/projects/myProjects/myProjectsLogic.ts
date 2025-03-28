@@ -21,7 +21,7 @@ export function closeCreateModal() {
 
 export async function submitDeleteForm(toDelete: string) {
     const payload = {
-        toDelete: toDelete
+        toEdit: toDelete
     };
 
     try {
@@ -43,6 +43,68 @@ export async function submitDeleteForm(toDelete: string) {
         const data = await res.json();
 		console.log('Project deleted:', data);
 		alert('Project deleted successfully!');
+		showCreateModal.set(false);
+    } catch (err) {
+		console.error('Error:', err);
+		alert('Something went wrong.');
+	}
+}
+
+export async function submitLockForm(toLock: string) {
+    const payload = {
+        toEdit: toLock
+    };
+
+    try {
+        const res = await fetch('/api/projects/lock', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+
+        if (!res.ok) {
+            const error = await res.text();
+			console.error('Failed to lock project:', error);
+			alert('Error locking project');
+			return;
+        }
+
+        const data = await res.json();
+		console.log('Project locked:', data);
+		alert('Project locked successfully!');
+		showCreateModal.set(false);
+    } catch (err) {
+		console.error('Error:', err);
+		alert('Something went wrong.');
+	}
+}
+
+export async function submitUnlockForm(toUnlock: string) {
+    const payload = {
+        toEdit: toUnlock
+    };
+
+    try {
+        const res = await fetch('/api/projects/unlock', {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+
+        if (!res.ok) {
+            const error = await res.text();
+			console.error('Failed to unlock project:', error);
+			alert('Error unlocking project');
+			return;
+        }
+
+        const data = await res.json();
+		console.log('Project unlocked:', data);
+		alert('Project unlocked successfully!');
 		showCreateModal.set(false);
     } catch (err) {
 		console.error('Error:', err);

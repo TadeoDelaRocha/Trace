@@ -37,7 +37,7 @@ export async function submitRestoreForm(toRestore: string) {
 
 export async function submitBanishForm(toBanish: string) {
     const payload = {
-        toBanish: toBanish
+        toEdit: toBanish
     };
 
     console.log("Submitting banish request:", payload);

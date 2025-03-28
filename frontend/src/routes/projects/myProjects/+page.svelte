@@ -11,6 +11,8 @@
 		closeCreateModal,
 		submitCreateForm,
         submitDeleteForm,
+		submitLockForm,
+		submitUnlockForm,
 		openMenuFor,
 		toggleMenu,
 	} from './myProjectsLogic';
@@ -69,11 +71,12 @@
 										<!-- svelte-ignore a11y_click_events_have_key_events -->
 										<!-- svelte-ignore a11y_no_static_element_interactions -->
 										<div class="dropdown-menu" on:click|stopPropagation>
-											<button on:click={() => console.log('Lock', project.name)}>Lock</button>
-											<button on:click={() => {submitDeleteForm(project.name);}}
-                                        >
-                                            Delete
-                                        </button>
+											{#if project.locked}
+												<button on:click={() => {submitUnlockForm(project.name);}}>Unlock</button>
+											{:else}
+												<button on:click={() => {submitLockForm(project.name);}}>Lock</button>
+												<button on:click={() => {submitDeleteForm(project.name);}}>Delete</button>
+											{/if}
 										</div>
 									{/if}
 								</div>
