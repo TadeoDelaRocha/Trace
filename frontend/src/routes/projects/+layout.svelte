@@ -30,14 +30,14 @@
         </button>
         <button
           class="icon-button"
-          class:active={$currentPath === '/projects/myProjects'}
+          class:active={$currentPath === '/projects/folders'}
           on:click={() => navigate('/projects/folders')}
         >
           📊
         </button>
         <button
           class="icon-button"
-          class:active={$currentPath === '/projects/myProjects'}
+          class:active={$currentPath === '/projects/deleted'}
           on:click={() => navigate('/projects/deleted')}
         >
           📈

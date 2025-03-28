@@ -1,9 +1,26 @@
 from fastapi import HTTPException
+from pydantic import BaseModel
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.db import create_project, delete_project, get_from_analyst, lock_project, unlock_project, banish_project, restore_project, get_from_analyst_deleted, join_project_by_id, get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name
 
 app = FastAPI()
+
+class RestorePayload(BaseModel):
+    toRestore: str
+
+class BanishPayload(BaseModel):
+    toBanish: str
+
+class DeletePayload(BaseModel):
+    toDelete: str
+
+class CreateProjectPayload(BaseModel):
+    name: str
+    date: str
+    time: str
+    owner: str
+    description: str
 
 #Allow requests from svelte 
 app.add_middleware(
@@ -15,15 +32,23 @@ app.add_middleware(
 )
 
 @app.post("/api/projects/create")
-def createProject(name: str, owner: str):
-    project = create_project(name, owner)
-    if project:
-        return {"message": "Project created", "project": project}
+def createProject(project: CreateProjectPayload):
+    result = create_project(
+        name=project.name,
+        owner_initials=project.owner,
+        date=project.date,
+        time=project.time,
+        description=project.description
+    )
+
+    if result:
+        return {"message": "Project created successfully", "project": result}
     else:
-        raise HTTPException(status_code=404, detail="Project not created")
+        raise HTTPException(status_code=500, detail="Failed to create project")
 
 @app.post("/api/projects/delete")
-def deleteProject(name: str):
+def deleteProject(payload: DeletePayload):
+    name = payload.toDelete
     project = delete_project(name)
     if project:
         return {"message": "Project marked as deleted", "project": project}
@@ -57,15 +82,20 @@ def unlockProject(name: str):
         raise HTTPException(status_code=404, detail="Project not found")
 
 @app.post("/api/projects/banish")
-def banishProject(name: str):
-    banish_project(name)
-    return {"message": "Project banished"}
+def banishProject(payload: BanishPayload):
+    name = payload.toBanish
+    result = banish_project(name)
+    if result == 1:
+        return {"message": "Project banished forever", "project": project}
+    else:
+        raise HTTPException(status_code=404, detail="Project not found")
 
 @app.post("/api/projects/restore")
-def restoreProject(name: str):
+def restoreProject(payload: RestorePayload):
+    name = payload.toRestore
     project = restore_project(name)
     if project:
-        return {"message": "Project restored", "project": project}
+        return {"message": "Project marked as deleted", "project": project}
     else:
         raise HTTPException(status_code=404, detail="Project not found")
 

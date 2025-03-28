@@ -15,13 +15,28 @@ driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
 def close_driver():
     driver.close()
 
-def create_project(name: str, owner: str):
+def create_project(name: str, owner_initials: str, date: str, time: str, description: str):
     query = """
-        CREATE (p: Project {name: $name, owner: $owner})
-        RETURN p
+        MATCH (a:Analyst {initials: $owner_initials})
+        CREATE (p:Project {
+            name: $name,
+            startDate: $date,
+            startTime: $time,
+            description: $description,
+            deleted: false,
+            lastEdit: datetime()
+        })
+        CREATE (a)-[:LEADS]->(p)
+        RETURN p, a.initials AS owner
     """
     with driver.session() as session:
-        result = session.run(query, name=name, owner=owner)
+        result = session.run(query, {
+            "name": name,
+            "owner_initials": owner_initials,
+            "date": date,
+            "time": time,
+            "description": description
+        })
         record = result.single()
         return dict(record["p"]) if record else None
 
@@ -29,7 +44,7 @@ def delete_project(name: str):
     query = """
         MATCH (p:Project {name: $name})
         SET p.deleted = true
-        RETURN p.name AS name, p.owner AS owner
+        RETURN p
     """
     with driver.session() as session:
         result = session.run(query, name=name)
@@ -40,7 +55,7 @@ def get_from_analyst(initials: str):
     query = """
         MATCH (a:Analyst {initials: $initials})-[:ANALYST_ON|LEADS]->(p:Project)
         WHERE p.deleted = false
-        RETURN p.name AS name, p.owner AS owner
+        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
@@ -50,7 +65,7 @@ def get_from_analyst_deleted(initials: str):
     query = """
         MATCH (a:Analyst {initials: $initials})-[:ANALYST_ON|LEADS]->(p:Project)
         WHERE p.deleted = true
-        RETURN p
+        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
@@ -85,7 +100,7 @@ def banish_project(name: str):
     """
     with driver.session() as session:
         session.run(query, name=name)
-    return 
+    return 1
 
 def restore_project(name: str):
     query = """
