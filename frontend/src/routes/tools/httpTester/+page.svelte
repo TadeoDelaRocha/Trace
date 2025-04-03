@@ -1,64 +1,84 @@
 <script lang="ts">
    import { ProxyServer, HTTPClient } from '$lib/ProxyServer';
 
-let proxyServer = new ProxyServer();
-let httpClient = new HTTPClient(proxyServer);
+  let proxyServer = new ProxyServer();
+  let httpClient = new HTTPClient(proxyServer);
 
-let requestUrl = '';
-let requestMethod = 'GET';
-let requestBody = '';
-let headers = '';
-let cookies = '';
-let additionalParams = '';
-let hideStatusCode = false;
+  let requestUrl = '';
+  let requestMethod = 'GET';
+  let requestBody = '';
+  let headers = '';
+  let cookies = '';
+  let additionalParams = '';
+  let hideStatusCode = false;
 
-let response = '';
-let loading = false;
-let history = { requests: [], responses: [] };
-let logs: string[] = [];
+  let response = '';
+  let loading = false;
+  let history = { requests: [], responses: [] };
+  let logs: string[] = [];
 
-function parseHeaders(headerString: string): Record<string, string> {
+  function parseHeaders(headerString: string): Record<string, string> {
     return headerString
-        .split('\n')
-        .map(line => line.trim())
-        .filter(line => line.includes(':'))
-        .reduce((acc, line) => {
-            const [key, value] = line.split(':').map(s => s.trim());
-            acc[key] = value;
-            return acc;
-        }, {});
-}
+      .split('\n')
+      .map(line => line.trim())
+      .filter(line => line.includes(':'))
+      .reduce((acc, line) => {
+        const [key, value] = line.split(':').map(s => s.trim());
+        acc[key] = value;
+        return acc;
+      }, {});
+  }
 
-async function sendRequest() {
+  async function sendRequest() {
     loading = true;
     const config = {
-        url: requestUrl,
-        method: requestMethod,
-        headers: parseHeaders(headers),
-        body: requestBody,
-        cookies,
-        params: additionalParams,
+      url: requestUrl,
+      method: requestMethod,
+      headers: parseHeaders(headers),
+      body: requestBody,
+      cookies,
+      params: additionalParams,
     };
     response = await httpClient.sendRequestToProxy(config);
     history = proxyServer.getHistory();
     logs = httpClient.getLogs();
     loading = false;
-}
+  }
 
-function navigate(route) {
-      window.location.href = route;
+  function navigate(route) {
+    window.location.href = route;
+  }
+
+  // If true, will allow for formatJson to run
+  function isJson(str: string): boolean {
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (e) {
+      return false;
     }
+  }
+
+  function formatJson(jsonStr: string): string {
+    try {
+      const obj = JSON.parse(jsonStr);
+      return JSON.stringify(obj, null, 2);
+    } catch (e) {
+      return jsonStr;
+    }
+  }
 </script>
 
 <div class="top-bar">
-  <h1>HTTP Tester</h1>
-  <button class="back-button" on:click={() => navigate('/tools/toolsDashboard')}>Back</button>
+    <h1>HTTP Tester</h1>
+    <button class="back-button" on:click={() => navigate('/tools/toolsDashboard')}>Back</button>
 </div>
 
 <main>
     <p class="subtext">Configuration</p>
-  
+    
     <div class="form-section">
+        <!-- Parameters for requests -->
         <input bind:value={requestUrl} placeholder="Target URL (e.g. https://example.com)" />
         <textarea bind:value={headers} placeholder="Headers (one per line: Key: Value)" rows="3"></textarea>
         <textarea bind:value={cookies} placeholder="Cookies" rows="2"></textarea>
@@ -80,12 +100,13 @@ function navigate(route) {
         </button>
     </div>
   
+    <!-- Formats the response we get after sending a request>:) -->
     {#if response}
         <h2>Response</h2>
-        {#if response.startsWith("{") || response.startsWith("[")}
-            <pre>{response}</pre>
+        {#if isJson(response)}
+            <pre>{formatJson(response)}</pre>
         {:else}
-            {@html response}
+            <pre>{response}</pre>
         {/if}
     {/if}
   
@@ -147,8 +168,6 @@ h1 {
   gap: 1rem;
 }
 
-input[type="text"],
-input[type="url"],
 textarea {
   padding: 0.75rem 1rem;
   border: 1px solid #ccc;

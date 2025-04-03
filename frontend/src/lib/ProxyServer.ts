@@ -4,6 +4,7 @@ export class ProxyServer {
     requestHistory: string[] = [];
     responseHistory: string[] = [];
 
+    //Sends requests to our proxy in the backend
     async sendRequest(requestConfig: {
         url: string;
         method: string;
@@ -44,6 +45,7 @@ export class ProxyServer {
         }
     }
 
+    //TODO(Team 12-Jorge): Change to Response and RequestManager
     getHistory() {
         return {
             requests: this.requestHistory,
