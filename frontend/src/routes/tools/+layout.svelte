@@ -23,24 +23,24 @@
       <div class="middle">
         <button
           class="icon-button-mid"
-          class:active={$currentPath === '/projects/myProjects'}
-          on:click={() => navigate('/projects/myProjects')}
+          class:active={$currentPath === '/tools/toolsDashboard'}
+          on:click={() => navigate('/tools/toolsDashboard')}
         >
-          <img src="/icons/folder.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/magnifying.svg" alt="Projects" class="icon-img" />
         </button>
         <button
           class="icon-button-mid"
-          class:active={$currentPath === '/projects/folders'}
-          on:click={() => navigate('/projects/folders')}
+          class:active={$currentPath === '/tools/toolsAnalysis'}
+          on:click={() => navigate('/tools/toolsAnalysis')}
         >
-          <img src="/icons/folder_open.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/analysis.svg" alt="Projects" class="icon-img" />
         </button>
         <button
           class="icon-button-mid"
-          class:active={$currentPath === '/projects/deleted'}
-          on:click={() => navigate('/projects/deleted')}
+          class:active={$currentPath === '/tools/results'}
+          on:click={() => navigate('/tools/results')}
         >
-          <img src="/icons/trash.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/results.svg" alt="Projects" class="icon-img" />
         </button>
       </div>
   

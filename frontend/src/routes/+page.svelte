@@ -5,12 +5,10 @@
   </script>
   
   <div class="landing-page">
-    <!-- TRACE Logo (Top Left) -->
-    <img src="/logo.png" alt="TRACE Logo" class="logo">
   
     <!-- Navigation Bar (Top Right) -->
     <nav class="nav">
-      <button class="nav-button" on:click={() => navigateTo('/projects/myProjects')}>Dashboard</button>
+      <button class="nav-button" on:click={() => navigateTo('/projects/myProjects')}>Projects Dashboard</button>
       <button class="nav-button" on:click={() => navigateTo('/settings')}>Settings</button>
     </nav>
   
@@ -22,7 +20,7 @@
         Detect Vulnerabilities, Strengthen Defense, and Secure Your Network Seamlessly.  
         Gain Real-Time Insights and Proactive Protection.
       </p>
-      <button class="start-button" on:click={() => navigateTo('/start')}>Start</button>
+      <button class="start-button" on:click={() => navigateTo('/tools/toolsDashboard')}>Get Started</button>
     </main>
   </div>
   
@@ -33,14 +31,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       background-color: var(--background-color);
       color: var(--text-color);
       padding: 20px;
-      text-align: center;
       position: relative;
+      overflow: hidden;
     }
-  
+
     /* TRACE Logo Styling (Top Left) */
     .logo {
       position: absolute;
@@ -76,8 +74,13 @@
   
     /* Main Content (Centered) */
     .content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       max-width: 800px;
       padding: 20px;
+      text-align: center;
       z-index: 1;
     }
   
