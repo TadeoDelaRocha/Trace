@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, Request, Query, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.db import create_project, delete_project, get_from_analyst, lock_project, unlock_project, banish_project, restore_project, get_from_analyst_deleted, join_project_by_id, get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name
+from app.db import create_project, update_project, delete_project, get_from_analyst, lock_project, unlock_project, banish_project, restore_project, get_from_analyst_deleted, join_project_by_id, get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name
 
 import json
 import httpx
@@ -13,12 +13,20 @@ app = FastAPI()
 class ProjectNamePayload(BaseModel):
     toEdit: str
 
-class CreateProjectPayload(BaseModel):
+class ProjectPayload(BaseModel):
     name: str
     date: str
     time: str
     owner: str
     description: str
+
+class ProjectUpdatePayload(BaseModel):
+    name: str
+    date: str
+    time: str
+    owner: str
+    description: str
+    id: int
 
 #Allow requests from svelte 
 app.add_middleware(
@@ -30,7 +38,7 @@ app.add_middleware(
 )
 
 @app.post("/api/projects/create")
-def createProject(project: CreateProjectPayload):
+def createProject(project: ProjectPayload):
     result = create_project(
         name=project.name,
         owner_initials=project.owner,
@@ -43,6 +51,24 @@ def createProject(project: CreateProjectPayload):
         return {"message": "Project created successfully", "project": result}
     else:
         raise HTTPException(status_code=500, detail="Failed to create project")
+
+@app.post("/api/projects/update")
+def updateProject(project: ProjectUpdatePayload):
+    print("UPDATE REQUEST:", project)
+    result = update_project(
+        name=project.name,
+        owner_initials=project.owner,
+        date=project.date,
+        time=project.time,
+        description=project.description,
+        id=project.id
+    )
+    print("UPDATED:", result)
+
+    if result:
+        return {"message": "Project updated successfully", "project": result}
+    else:
+        raise HTTPException(status_code=500, detail="Failed to update project")
 
 @app.post("/api/projects/delete")
 def deleteProject(payload: ProjectNamePayload):

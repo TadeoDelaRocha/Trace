@@ -3,7 +3,7 @@
     import { derived } from 'svelte/store';
     import { page } from '$app/stores';
 
-    const currentPath = derived(page, ($page) => $page.url.pathname);
+    const currentPath = derived(page, ($page) => $page?.url?.pathname ?? '/');
 
     function navigate(route) {
       window.location.href = route;

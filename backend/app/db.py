@@ -55,6 +55,37 @@ def create_project(name: str, owner_initials: str, date: str, time: str, descrip
         record = result.single()
         return dict(record["p"]) if record else None
 
+def update_project(name: str, owner_initials: str, date: str, time: str, description: str, id: int):
+    query = """
+        MATCH (p:Project)
+        WHERE ID(p) = $id
+        OPTIONAL MATCH (oldOwner:Analyst)-[r:LEADS]->(p)
+        DELETE r
+        WITH p
+        MATCH (newOwner:Analyst {initials: $owner_initials})
+        SET p.name = $name,
+            p.startDate = $date,
+            p.startTime = $time,
+            p.description = $description,
+            p.owner = $owner_initials,
+            p.lastEdit = datetime()
+        CREATE (newOwner)-[:LEADS]->(p)
+        RETURN p, newOwner.initials AS owner
+    """
+
+    with driver.session() as session:
+        result = session.run(query, {
+            "id": id,
+            "name": name,
+            "owner_initials": owner_initials,
+            "date": date,
+            "time": time,
+            "description": description
+        })
+        record = result.single()
+        return dict(record["p"]) if record else None
+
+
 def delete_project(name: str):
     query = """
         MATCH (p:Project {name: $name})
@@ -70,7 +101,7 @@ def get_from_analyst(initials: str):
     query = """
         MATCH (a:Analyst {initials: $initials})-[:ANALYST_ON|LEADS]->(p:Project)
         WHERE p.deleted = false
-        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit, p.locked AS locked
+        RETURN p.description as description, ID(p) AS id, p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit, p.locked AS locked
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
@@ -78,21 +109,24 @@ def get_from_analyst(initials: str):
             "name": record["name"],
             "owner": record["owner"],
             "editTime": to_iso(record["lastEdit"]),
-            "locked": record["locked"]
+            "locked": record["locked"],
+            "id": record["id"],
+            "description": record["description"],
         } for record in result]
 
 def get_from_analyst_deleted(initials: str):
     query = """
         MATCH (a:Analyst {initials: $initials})-[:ANALYST_ON|LEADS]->(p:Project)
         WHERE p.deleted = true
-        RETURN p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit
+        RETURN ID(p) AS id, p.name AS name, p.owner AS owner, p.lastEdit AS lastEdit
     """
     with driver.session() as session:
         result = session.run(query, initials=initials)
         return [{
             "name": record["name"],
             "owner": record["owner"],
-            "editTime": to_iso(record["lastEdit"])
+            "editTime": to_iso(record["lastEdit"]),
+            "id": record["id"],
         } for record in result]
 
 
