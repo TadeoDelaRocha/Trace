@@ -1,10 +1,8 @@
-# backend/app/db.py
 import os
 from dotenv import load_dotenv
 from neo4j import GraphDatabase
 from neo4j.time import DateTime as Neo4jDateTime
 from datetime import datetime
-
 
 # Load environment variables from .env
 load_dotenv()
@@ -129,7 +127,6 @@ def get_from_analyst_deleted(initials: str):
             "id": record["id"],
         } for record in result]
 
-
 def lock_project(name: str):
     query = """
         MATCH(p:Project {name: $name})
@@ -182,7 +179,6 @@ def join_project_by_id(initials: str, project_id: str) -> bool:
         result = session.run(query, initials=initials, project_id=project_id)
         return result.single() is not None
 
-
 def get_folders_by_project_id(project_id: str):
     query = """
         MATCH (:Project {projectId: $project_id})-[:HAS_FOLDER]->(f:ProjectFolder)
@@ -191,7 +187,6 @@ def get_folders_by_project_id(project_id: str):
     with driver.session() as session:
         result = session.run(query, project_id=project_id)
         return [record["name"] for record in result]
-
 
 def delete_folder_by_name(folder_name: str) -> bool:
     query = """
@@ -204,7 +199,6 @@ def delete_folder_by_name(folder_name: str) -> bool:
         record = result.single()
         return record["deleted"] if record else False
 
-
 def rename_folder_by_name(old_name: str, new_name: str) -> bool:
     query = """
         MATCH (f:ProjectFolder {name: $old_name})
@@ -215,3 +209,64 @@ def rename_folder_by_name(old_name: str, new_name: str) -> bool:
         result = session.run(query, old_name=old_name, new_name=new_name)
         record = result.single()
         return record is not None
+
+# ---------------------------
+# Analyst-related functions
+# ---------------------------
+
+def create_or_update_analyst(initials: str, is_lead: bool):
+    """
+    Creates a new analyst or updates an existing one.
+    Sets the role to "Lead" if is_lead is True; otherwise "Regular".
+    """
+    role = "Lead" if is_lead else "Regular"
+    query = """
+    MERGE (a:Analyst {initials: $initials})
+    SET a.role = $role
+    RETURN a.initials AS initials, a.role AS role
+    """
+    with driver.session() as session:
+        result = session.run(query, initials=initials, role=role)
+        record = result.single()
+        return {"initials": record["initials"], "role": record["role"]} if record else None
+
+def is_lead_analyst(project_name: str, initials: str) -> bool:
+    """
+    Checks if the analyst with given initials is the lead for the project.
+    """
+    query = """
+    MATCH (p:Project {name: $project_name})<-[:LEADS]-(a:Analyst {initials: $initials})
+    RETURN COUNT(p) > 0 AS is_lead
+    """
+    with driver.session() as session:
+        result = session.run(query, project_name=project_name, initials=initials)
+        record = result.single()
+        return record["is_lead"] if record else False
+
+def leave_project(initials: str, project_name: str) -> bool:
+    """
+    Removes the relationship between the analyst and the project.
+    Only non-leads should be allowed to leave.
+    """
+    query = """
+    MATCH (p:Project {name: $project_name})<-[r:JOINS]-(a:Analyst {initials: $initials})
+    DELETE r
+    RETURN COUNT(r) AS deleted
+    """
+    with driver.session() as session:
+        result = session.run(query, project_name=project_name, initials=initials)
+        record = result.single()
+        return record["deleted"] > 0 if record else False
+
+def get_projects_with_analysts():
+    """
+    Retrieves all projects along with their lead analyst and any regular analysts who have joined.
+    """
+    query = """
+    MATCH (p:Project)<-[:LEADS]-(l:Analyst)
+    OPTIONAL MATCH (p)<-[r:JOINS]-(a:Analyst)
+    RETURN p.name AS project_name, l.initials AS lead_analyst, p.locked AS locked, COLLECT(a.initials) AS regular_analysts
+    """
+    with driver.session() as session:
+        result = session.run(query)
+        return [record.data() for record in result]

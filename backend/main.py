@@ -1,9 +1,20 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, FastAPI
 from pydantic import BaseModel
+
 from fastapi import FastAPI, Request, Query, HTTPException
 from fastapi.responses import JSONResponse
+
 from fastapi.middleware.cors import CORSMiddleware
+
+from app.db import (
+    create_project, delete_project, get_from_analyst, lock_project, unlock_project,
+    banish_project, restore_project, get_from_analyst_deleted, join_project_by_id,
+    get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name,
+    create_or_update_analyst, is_lead_analyst, leave_project, get_projects_with_analysts
+)
+
 from app.db import create_project, update_project, delete_project, get_from_analyst, lock_project, unlock_project, banish_project, restore_project, get_from_analyst_deleted, join_project_by_id, get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name
+
 
 import json
 import httpx
@@ -20,6 +31,7 @@ class ProjectPayload(BaseModel):
     owner: str
     description: str
 
+
 class ProjectUpdatePayload(BaseModel):
     name: str
     date: str
@@ -28,7 +40,7 @@ class ProjectUpdatePayload(BaseModel):
     description: str
     id: int
 
-#Allow requests from svelte 
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], #TODO(Team 12 - Jorge): Changed as ports can be different
@@ -133,12 +145,10 @@ def join_project(project_id: str, analyst_initials: str):
     else:
         raise HTTPException(status_code=404, detail="Analyst or Project not found")
 
-
 @app.get("/api/projects/getFolders")
 def get_folders(project_id: str):
     folders = get_folders_by_project_id(project_id)
     return {"folders": folders}
-
 
 @app.post("/api/projects/deleteFolder")
 def delete_folder(folder_name: str):
@@ -148,7 +158,6 @@ def delete_folder(folder_name: str):
     else:
         raise HTTPException(status_code=404, detail="Folder not found")
 
-
 @app.post("/api/projects/renameFolder")
 def rename_folder(old_name: str, new_name: str):
     renamed = rename_folder_by_name(old_name, new_name)
@@ -156,7 +165,44 @@ def rename_folder(old_name: str, new_name: str):
         return {"message": f"Folder renamed from '{old_name}' to '{new_name}'"}
     else:
         raise HTTPException(status_code=400, detail="Rename failed or folder not found")
-    
+
+
+# ---------------------------
+# Analyst-related Endpoints
+# ---------------------------
+
+class AnalystLoginPayload(BaseModel):
+    initials: str
+    is_lead: bool
+
+@app.post("/api/analyst/login")
+def analyst_login(payload: AnalystLoginPayload):
+    result = create_or_update_analyst(payload.initials, payload.is_lead)
+    if result:
+        return {"message": "Login successful", "analyst": result}
+    else:
+        raise HTTPException(status_code=500, detail="Login failed")
+
+class LeaveProjectPayload(BaseModel):
+    project_name: str
+    initials: str
+
+@app.post("/api/analyst/leave")
+def analyst_leave(payload: LeaveProjectPayload):
+    # Prevent lead analysts from leaving their own projects.
+    if is_lead_analyst(payload.project_name, payload.initials):
+        raise HTTPException(status_code=403, detail="Lead cannot leave the project")
+    success = leave_project(payload.initials, payload.project_name)
+    if success:
+        return {"message": f"Analyst {payload.initials} left project {payload.project_name}"}
+    else:
+        raise HTTPException(status_code=404, detail="Analyst or project not found")
+
+@app.get("/api/analyst/list_projects")
+def list_projects_analysts():
+    projects = get_projects_with_analysts()
+    return {"projects": projects}
+
 @app.post("/proxy")
 async def proxy_handler(request: Request):
     try:
@@ -195,3 +241,4 @@ async def proxy_handler(request: Request):
                 "message": "Failed to process proxy request"
             }
         )
+

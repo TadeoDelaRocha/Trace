@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
+	import { goto } from '$app/navigation';
 	import {
 		activeTab,
 		name,
@@ -15,7 +17,7 @@
 		closeEditModal,
 		submitEditForm,
 		submitCreateForm,
-        submitDeleteForm,
+		submitDeleteForm,
 		submitLockForm,
 		submitUnlockForm,
 		openMenuFor,
@@ -25,10 +27,37 @@
 	export let data;
 	let projects = data.projects;
 
+	// Retrieve the logged-in user from local storage
+	let loggedInUser: { initials: string; role: string } | null = null;
+	onMount(() => {
+		const storedUser = localStorage.getItem('user');
+		if (storedUser) {
+			loggedInUser = JSON.parse(storedUser);
+		}
+	});
+
+	// Log out function: clear storage and redirect to home page
+	function logout() {
+		localStorage.removeItem('user');
+		goto('/');
+	}
+
 	console.log('myProjects:', projects);
 </script>
 
 <div class="page-wrapper">
+	<!-- User header with log out button -->
+	<header class="user-header">
+		{#if loggedInUser}
+			<div class="user-info">
+				<p>Logged in as: {loggedInUser.initials} ({loggedInUser.role})</p>
+			</div>
+			<button class="logout-btn" on:click={logout}>Log Out</button>
+		{:else}
+			<p>Not logged in</p>
+		{/if}
+	</header>
+
 	<div class="top-bar">
 		<h1>Project Selection</h1>
 		<button class="create-btn" on:click={openCreateModal}>+ Create new</button>
@@ -207,3 +236,31 @@
 		</div>
 	</div>
 {/if}
+
+<style>
+	.user-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 1rem;
+		background-color: #f4f4f4;
+		border-bottom: 1px solid #ccc;
+	}
+	.user-header .logout-btn {
+		background: none;
+		border: none;
+		font-size: 0.9rem;
+		cursor: pointer;
+		color: #0070f3;
+	}
+	.page-wrapper {
+		padding: 1rem;
+	}
+	.top-bar {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		margin-top: 1rem;
+	}
+	/* Other styles remain as needed */
+</style>
