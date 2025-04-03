@@ -23,7 +23,7 @@ class CreateProjectPayload(BaseModel):
 #Allow requests from svelte 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], #TODO(Team 12 - Jorge): Changed as ports can be different
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -134,6 +134,7 @@ def rename_folder(old_name: str, new_name: str):
 @app.post("/proxy")
 async def proxy_handler(request: Request):
     try:
+        #Gets info that will be sent to proxy
         payload = await request.json()
         url = payload.get("url")
         method = payload.get("method", "GET").upper()
