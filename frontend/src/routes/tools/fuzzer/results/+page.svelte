@@ -46,13 +46,18 @@
     // Function to get highlight color based on response code
     function getHighlightColor(row) {
       if (row.response >= 500) {
-        return '#ffdddd'; // Red background for server errors
+        return '#ffdddd'; // Red background for server errors 
       } else if (row.response >= 400) {
         return '#fff3cd'; // Yellow background for client errors
       } else if (row.error === true) {
         return '#ffdddd'; // Red background for other errors
       }
       return 'transparent';
+    }
+
+    // Function to navigate to given route
+    function navigate(route) {
+      window.location.href = route;
     }
   
     //TODO-----------------------------------------------
@@ -62,7 +67,7 @@
     }
   
     function handleRestart() {
-        goto('/fuzzer/running');
+        goto('/tools/fuzzer/running');
         // Logic for restarting scan would go here
     }
   
@@ -171,6 +176,7 @@
           </svg>
         </button>
         <div class="spacer"></div>
+        <button class="btn" on:click={() => navigate('/tools/toolsDashboard')}>Back</button>
         <button class="btn" on:click={handleShowTerminal} title="Show terminal output">Show Terminal</button>
       </div>
     </div>

@@ -49,7 +49,7 @@
         } else {
           status = "Completed";
           clearInterval(intervalId);
-          goto('/fuzzer/results'); // Redirect to results page when completed
+          goto('/tools/fuzzer/results'); // Redirect to results page when completed
         }
       }, 1000);
     });

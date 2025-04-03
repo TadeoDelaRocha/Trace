@@ -44,10 +44,18 @@ async function sendRequest() {
     logs = httpClient.getLogs();
     loading = false;
 }
+
+function navigate(route) {
+      window.location.href = route;
+    }
 </script>
 
+<div class="top-bar">
+  <h1>HTTP Tester</h1>
+  <button class="back-button" on:click={() => navigate('/tools/toolsDashboard')}>Back</button>
+</div>
+
 <main>
-    <h1>HTTP Tester</h1>
     <p class="subtext">Configuration</p>
   
     <div class="form-section">
@@ -109,9 +117,7 @@ async function sendRequest() {
   margin: 2rem auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   padding: 2rem;
-  background-color: #f9f9f9;
   border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
 }
 
 h1 {
@@ -126,6 +132,13 @@ h1 {
   color: #888;
   margin-top: 2rem;
   margin-bottom: 0.5rem;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 }
 
 .form-section {
@@ -160,6 +173,17 @@ label {
 
 button {
   margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #b6d3f2;
+  color: #000;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.back-button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   background-color: #b6d3f2;
