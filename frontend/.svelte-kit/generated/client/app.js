@@ -7,22 +7,20 @@ export const nodes = [
 	() => import('./nodes/3'),
 	() => import('./nodes/4'),
 	() => import('./nodes/5'),
-	() => import('./nodes/6')
+	() => import('./nodes/6'),
+	() => import('./nodes/7'),
+	() => import('./nodes/8')
 ];
 
 export const server_loads = [];
 
 export const dictionary = {
 		"/": [3],
-
-		"/projects/deleted": [4,[2]],
-		"/projects/myProjects": [5,[2]],
-		"/start": [6]
-
 		"/httptester": [4],
 		"/projects/deleted": [5,[2]],
-		"/projects/myProjects": [6,[2]]
-
+		"/projects/myProjects": [6,[2]],
+		"/projects/webtree": [7,[2]],
+		"/start": [8]
 	};
 
 export const hooks = {
