@@ -15,32 +15,32 @@
       <!-- Top: Home -->
       <div class="top">
         <button class="icon-button" on:click={() => navigate('/')}>
-            <img src="/favicon.png" alt="Home" class="icon-img" />
+            <img src="/icons/favicon.png" alt="Home" class="icon-img" />
         </button>
       </div>
   
       <!-- Middle: Main nav -->
       <div class="middle">
         <button
-          class="icon-button"
+          class="icon-button-mid"
           class:active={$currentPath === '/projects/myProjects'}
           on:click={() => navigate('/projects/myProjects')}
         >
-          📁
+          <img src="/icons/folder.svg" alt="Projects" class="icon-img" />
         </button>
         <button
-          class="icon-button"
+          class="icon-button-mid"
           class:active={$currentPath === '/projects/folders'}
           on:click={() => navigate('/projects/folders')}
         >
-          📊
+          <img src="/icons/folder_open.svg" alt="Projects" class="icon-img" />
         </button>
         <button
-          class="icon-button"
+          class="icon-button-mid"
           class:active={$currentPath === '/projects/deleted'}
           on:click={() => navigate('/projects/deleted')}
         >
-          📈
+          <img src="/icons/trash.svg" alt="Projects" class="icon-img" />
         </button>
       </div>
   
@@ -51,7 +51,7 @@
           class:active={$currentPath === '/settings'}
           on:click={() => navigate('/settings')}
         >
-          ⚙️
+          <img src="/icons/gear.svg" alt="Projects" class="icon-img" />
         </button>
       </div>
     </aside>
@@ -61,14 +61,7 @@
     </main>
   </div>
   
-  <style>
-    .icon-img {
-        width: 42px;
-        height: 42px;
-        object-fit: contain;
-        border-radius: 6px; /* optional for a softer look */
-        }
-            
+  <style>  
     .layout {
       display: flex;
       height: 100vh;
@@ -99,8 +92,6 @@
         margin-bottom: 2rem;
     }
 
-
-    
     .top,
     .middle{
       display: flex;
@@ -110,25 +101,57 @@
     }
   
     .icon-button {
-      background: none;
+      width: 48px;           
+      height: 48px;
+      background-color: transparent;
       border: none;
-      font-size: 1.5rem;
-      color: #9ca3af;
+      border-radius: 9999px;  /* full round */
       cursor: pointer;
-      padding: 0.5rem;
-      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: background 0.2s, color 0.2s;
     }
-  
-    .icon-button:hover {
+
+    .icon-button-mid {
+      width: 48px;            
+      height: 48px;
+      background-color: #969ba1;
+      border: none;
+      border-radius: 9999px;  /* full round */
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .icon-button-mid:hover {
       background-color: #374151;
       color: white;
     }
-  
-    .icon-button.active {
-      background-color: #2563eb;
+
+    .icon-button-mid.active {
+      background-color: #3d62a5;
       color: white;
     }
+
+    .icon-button:hover {
+      background-color: #868b94;
+      color: white;
+    }
+
+    .icon-button.active {
+      background-color: #3d62a5;
+      color: white;
+    }
+
+    .icon-img {
+      width: 28px;       /* smaller icon */
+      height: 28px;
+      object-fit: contain;
+    }
+
   
     .content {
       margin-left: 80px; /* offset for fixed sidebar */

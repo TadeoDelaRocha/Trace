@@ -6,7 +6,7 @@
   
   <div class="landing-page">
     <!-- TRACE Logo (Top Left) -->
-    <img src="/logo.png" alt="TRACE Logo" class="logo">
+    <img src="/icons/logo.png" alt="TRACE Logo" class="logo">
   
     <!-- Navigation Bar (Top Right) -->
     <nav class="nav">
