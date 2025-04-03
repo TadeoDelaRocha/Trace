@@ -1,5 +1,5 @@
 <script lang="ts">
-   import { ProxyServer, HTTPClient } from '../../lib/ProxyServer';
+   import { ProxyServer, HTTPClient } from '$lib/ProxyServer';
 
 let proxyServer = new ProxyServer();
 let httpClient = new HTTPClient(proxyServer);
