@@ -26,21 +26,21 @@
           class:active={$currentPath === '/tools/toolsDashboard'}
           on:click={() => navigate('/tools/toolsDashboard')}
         >
-          <img src="/icons/folder.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/magnifying.svg" alt="Projects" class="icon-img" />
         </button>
         <button
           class="icon-button-mid"
           class:active={$currentPath === '/tools/toolsAnalysis'}
           on:click={() => navigate('/tools/toolsAnalysis')}
         >
-          <img src="/icons/folder_open.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/analysis.svg" alt="Projects" class="icon-img" />
         </button>
         <button
           class="icon-button-mid"
           class:active={$currentPath === '/tools/results'}
           on:click={() => navigate('/tools/results')}
         >
-          <img src="/icons/trash.svg" alt="Projects" class="icon-img" />
+          <img src="/icons/results.svg" alt="Projects" class="icon-img" />
         </button>
       </div>
   

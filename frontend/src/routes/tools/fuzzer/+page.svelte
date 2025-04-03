@@ -34,8 +34,7 @@
     // Start fuzzing process
     function startFuzzing() {
       // Implementation would connect to backend service
-        goto('/fuzzer/running');
-
+        goto('/tools/fuzzer/running');
     }
     
     // Handle form submission
@@ -44,175 +43,11 @@
       // Validate and process the form data here
       startFuzzing();
     }
+
+    function navigate(route) {
+      window.location.href = route;
+    }
   </script>
-  
-  <style>
-    .main-container {
-      display: flex;
-      width: 100%;
-      height: 100vh;
-      background-color: #f5f5f5;
-    }
-    
-    .content-area {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    
-    .title-container {
-      margin-bottom: 30px;
-    }
-    
-    h1 {
-      font-size: 24px;
-      margin: 0;
-      padding: 0;
-      font-weight: 500;
-    }
-    
-    .progress-indicator {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0 30px;
-    }
-    
-    .step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100px;
-      position: relative;
-    }
-    
-    .step-circle {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    
-    .step.active .step-circle {
-      background-color: #4CAF50;
-      color: white;
-    }
-    
-    .step.inactive .step-circle {
-      background-color: #e0e0e0;
-      color: #666;
-    }
-    
-    .step-label {
-      font-size: 12px;
-      color: #666;
-    }
-    
-    .step:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      top: 12px;
-      right: -50%;
-      width: 100%;
-      height: 2px;
-      background-color: #e0e0e0;
-      z-index: 0;
-    }
-    
-    .configuration-form {
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    
-    .form-section {
-      margin-bottom: 15px;
-    }
-    
-    .form-section label {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 5px;
-      color: #333;
-    }
-    
-    .form-section input[type="text"] {
-      width: 100%;
-      padding: 8px 10px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 14px;
-    }
-    
-    .radio-group {
-      display: flex;
-      gap: 20px;
-      margin-top: 5px;
-    }
-    
-    .radio-option {
-      display: flex;
-      align-items: center;
-    }
-    
-    .radio-option input {
-      margin-right: 5px;
-    }
-    
-    .wordlist-container {
-      position: relative;
-    }
-    
-    .wordlist-container input[type="text"] {
-      width: calc(100% - 120px);
-    }
-    
-    .upload-button {
-      position: absolute;
-      right: 0;
-      bottom: 0;
-      background-color: #2196F3;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 8px 15px;
-      font-size: 12px;
-      cursor: pointer;
-    }
-    
-    .upload-button:hover {
-      background-color: #0b7dda;
-    }
-    
-    .hidden-file-input {
-      display: none;
-    }
-    
-    .start-button {
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      padding: 10px 20px;
-      font-size: 14px;
-      cursor: pointer;
-      margin-top: 20px;
-    }
-    
-    .start-button:hover {
-      background-color: #45a049;
-    }
-    
-    h2 {
-      font-size: 18px;
-      margin: 0 0 20px 0;
-      color: #444;
-      font-weight: normal;
-    }
-  </style>
-  
-  <div class="main-container">
     
     <div class="content-area">
       <!-- Title section -->
@@ -347,9 +182,188 @@
         </div>
         
         <!-- Start button -->
-        <button class="start-button" on:click={startFuzzing}>
-          Start
-        </button>
+         <div class='bar'>
+          <button class="start-button" on:click={startFuzzing}>
+            Start
+          </button>
+          <button class="back-button" on:click={() => navigate('/tools/toolsDashboard')}>Back</button>
+         </div>
       </div>
     </div>
-  </div>
+
+    <style>
+      .bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+
+      .back-button {
+        padding: 0.75rem 1.5rem;
+        font-size: 0.85rem;
+        background-color: #b6d3f2;
+        color: #000;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+      }
+      
+      .content-area {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+      }
+      
+      .title-container {
+        margin-bottom: 30px;
+      }
+      
+      h1 {
+        font-size: 24px;
+        margin: 0;
+        padding: 0;
+        font-weight: 500;
+      }
+      
+      .progress-indicator {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0 30px;
+      }
+      
+      .step {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100px;
+        position: relative;
+      }
+      
+      .step-circle {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 5px;
+      }
+      
+      .step.active .step-circle {
+        background-color: #4CAF50;
+        color: white;
+      }
+      
+      .step.inactive .step-circle {
+        background-color: #e0e0e0;
+        color: #666;
+      }
+      
+      .step-label {
+        font-size: 12px;
+        color: #666;
+      }
+      
+      .step:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 12px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
+        background-color: #e0e0e0;
+        z-index: 0;
+      }
+      
+      .configuration-form {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .form-section {
+        margin-bottom: 15px;
+      }
+      
+      .form-section label {
+        display: block;
+        font-size: 13px;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      
+      .form-section input[type="text"] {
+        width: 100%;
+        padding: 8px 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+      
+      .radio-group {
+        display: flex;
+        gap: 20px;
+        margin-top: 5px;
+      }
+      
+      .radio-option {
+        display: flex;
+        align-items: center;
+      }
+      
+      .radio-option input {
+        margin-right: 5px;
+      }
+      
+      .wordlist-container {
+        position: relative;
+      }
+      
+      .wordlist-container input[type="text"] {
+        width: calc(100% - 120px);
+      }
+      
+      .upload-button {
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        background-color: #2196F3;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 8px 15px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      
+      .upload-button:hover {
+        background-color: #0b7dda;
+      }
+      
+      .hidden-file-input {
+        display: none;
+      }
+      
+      .start-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        margin-top: 20px;
+      }
+      
+      .start-button:hover {
+        background-color: #45a049;
+      }
+      
+      h2 {
+        font-size: 18px;
+        margin: 0 0 20px 0;
+        color: #444;
+        font-weight: normal;
+      }
+    </style>
