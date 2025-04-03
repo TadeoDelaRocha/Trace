@@ -17,8 +17,21 @@
 		toggleMenu,
 	} from './myProjectsLogic';
 
+	import { goto } from '$app/navigation';
+
 	export let data;
 	let projects = data.projects;
+
+	// Inject a dummy project for testing
+	projects = [
+		...projects,
+		{
+			name: "WebTree-Test",
+			editTime: new Date().toISOString(),
+			owner: "MAGF",
+			locked: false
+		}
+	];
 
 	console.log('myProjects:', projects);
 </script>
@@ -53,7 +66,7 @@
 						<th>Project Name</th>
 						<th>Last Edit</th>
 						<th>Lead Analyst</th>
-						<th></th>
+						<th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -62,7 +75,11 @@
 							<td>{project.name}</td>
 							<td>{new Date(project.editTime).toLocaleDateString()}</td>
 							<td>{project.owner}</td>
-							<td>Run Scan</td>
+							<td>
+								<button on:click={() => goto(`/projects/webtree?projectId=${project.name}`)}>
+									🌐 Web Tree
+								  </button>								  
+							</td>
 							<td class="actions-cell">
 								<div class="menu-wrapper">
 									<button class="dots-btn" on:click={(e) => toggleMenu(project.name, e)}>⋯</button>
