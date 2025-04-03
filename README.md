@@ -1,38 +1,24 @@
-# sv
+# Installing Dependencies
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
-
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+Before running the application, install all necessary dependencies using the requirements.txt file.
 
 ```bash
-# create a new project in the current directory
-npx sv create
-
-# create a new project in my-app
-npx sv create my-app
+pip install -r requirements.txt
 ```
 
-## Developing
+## Set Up Environment variables
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+Create a .env file containing the information required to connect to the database using the information in the Setup Channel of the Teams Group.
 
+## Running the App
+
+In order to run the application you will need to open two terminals and run the frontend and backend seperately.
+
+Frontend run command
 ```bash
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
-
-## Building
-
-To create a production version of your app:
-
+Backend run command
 ```bash
-npm run build
+uvicorn main:app --reload --port 8000
 ```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
