@@ -17,6 +17,8 @@
     "vite": "^6.0.0"
   },
   "dependencies": {
-    "neo4j-driver": "^5.28.1"
+    "neo4j-driver": "^5.28.1",
+    "vis-data": "^7.1.9",
+    "vis-network": "^9.1.9"
   }
 }
