@@ -1,5 +1,9 @@
 from fastapi import HTTPException, FastAPI
 from pydantic import BaseModel
+
+from fastapi import FastAPI, Request, Query, HTTPException
+from fastapi.responses import JSONResponse
+
 from fastapi.middleware.cors import CORSMiddleware
 from app.db import (
     create_project, delete_project, get_from_analyst, lock_project, unlock_project,
@@ -7,6 +11,9 @@ from app.db import (
     get_folders_by_project_id, delete_folder_by_name, rename_folder_by_name,
     create_or_update_analyst, is_lead_analyst, leave_project, get_projects_with_analysts
 )
+
+import json
+import httpx
 
 app = FastAPI()
 
@@ -23,7 +30,7 @@ class CreateProjectPayload(BaseModel):
 # Allow requests from svelte 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=["*"], #TODO(Team 12 - Jorge): Changed as ports can be different
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -128,6 +135,7 @@ def rename_folder(old_name: str, new_name: str):
     else:
         raise HTTPException(status_code=400, detail="Rename failed or folder not found")
 
+
 # ---------------------------
 # Analyst-related Endpoints
 # ---------------------------
@@ -163,3 +171,43 @@ def analyst_leave(payload: LeaveProjectPayload):
 def list_projects_analysts():
     projects = get_projects_with_analysts()
     return {"projects": projects}
+
+@app.post("/proxy")
+async def proxy_handler(request: Request):
+    try:
+        #Gets info that will be sent to proxy
+        payload = await request.json()
+        url = payload.get("url")
+        method = payload.get("method", "GET").upper()
+        headers = payload.get("headers", {})
+        body = payload.get("body", None)
+        cookies = payload.get("cookies", None)
+        params = payload.get("params", None)
+
+        async with httpx.AsyncClient() as client:
+            response = await client.request(
+                method=method,
+                url=url,
+                headers=headers,
+                content=body,
+                cookies=cookies,
+                params=httpx.QueryParams(params) if params else None
+            )
+
+        return {
+            "status_code": response.status_code,
+            "headers": dict(response.headers),
+            "content": response.text
+        }
+
+    except Exception as e:
+        import traceback
+        print("Proxy error:\n", traceback.format_exc())
+        return JSONResponse(
+            status_code=500,
+            content={
+                "error": str(e),
+                "message": "Failed to process proxy request"
+            }
+        )
+

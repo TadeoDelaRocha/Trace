@@ -14,9 +14,15 @@ export const server_loads = [];
 
 export const dictionary = {
 		"/": [3],
+
 		"/projects/deleted": [4,[2]],
 		"/projects/myProjects": [5,[2]],
 		"/start": [6]
+
+		"/httptester": [4],
+		"/projects/deleted": [5,[2]],
+		"/projects/myProjects": [6,[2]]
+
 	};
 
 export const hooks = {
