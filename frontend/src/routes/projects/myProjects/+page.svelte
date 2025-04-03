@@ -6,9 +6,14 @@
 		time,
 		owner,
 		description,
+		selectedProject,
 		showCreateModal,
 		openCreateModal,
 		closeCreateModal,
+		showEditModal,
+		openEditModal,
+		closeEditModal,
+		submitEditForm,
 		submitCreateForm,
         submitDeleteForm,
 		submitLockForm,
@@ -76,6 +81,7 @@
 											{:else}
 												<button on:click={() => {submitLockForm(project.name);}}>Lock</button>
 												<button on:click={() => {submitDeleteForm(project.name);}}>Delete</button>
+												<button on:click={() => {openEditModal(project);}}>Edit</button>
 											{/if}
 										</div>
 									{/if}
@@ -88,6 +94,60 @@
 		</div>
 	</section>
 </div>
+
+{#if $showEditModal}
+	<div
+	class="modal-overlay"
+	on:click={closeEditModal}
+	on:keydown={(e) => e.key === 'Enter' && closeEditModal()}
+	tabindex="0"
+	role="button"
+	aria-label="Close modal"
+	>
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="modal" on:click|stopPropagation>
+		<div class="modal-header">
+			<h2>Edit Project: {$selectedProject?.name}</h2>
+			<button class="close-btn" on:click={closeEditModal}>×</button>
+		</div>
+
+		<form on:submit={submitEditForm}>
+			<div class="form-grid">
+				<label>
+					Project Name *
+					<input required bind:value={$name} />
+				</label>
+		
+				<label>
+					Start Date *
+					<input type="date" required bind:value={$date} />
+				</label>
+		
+				<label>
+					Time *
+					<input type="time" required bind:value={$time} />
+				</label>
+		
+				<label>
+					Lead Analyst Initials *
+					<input required bind:value={$owner} />
+				</label>
+		
+				<label class="description-field" style="grid-column: span 2;">
+					Project Description
+					<textarea rows="3" bind:value={$description}></textarea>
+				</label>
+			</div>
+		
+			<div class="modal-actions">
+				<button type="button" class="cancel-btn" on:click={closeEditModal}>Cancel</button>
+				<button type="submit" class="submit-btn">Save Changes</button>
+			</div>
+		</form>		
+	</div>
+	</div>
+{/if}
 
 {#if $showCreateModal}
 	<div
